@@ -12,6 +12,8 @@ public class UserRequest {
     private String phone;
     private String jmbg;
     private String gender;
+    private String occupation;
+    private String employment;
 
     public String getUsername() {
         return username;
@@ -91,5 +93,21 @@ public class UserRequest {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public String getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(String employment) {
+        this.employment = employment;
     }
 }

@@ -54,6 +54,8 @@ public class UserService implements UserDetailsService {
         u.setPhone(request.getPhone());
         u.setJmbg(request.getJmbg());
         u.setGender(request.getGender());
+        u.setOccupation(request.getOccupation());
+        u.setEmployment(request.getEmployment());
         u.setRole(User.Role.USER);
         u.setEnabled(true);
 

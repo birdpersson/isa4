@@ -50,7 +50,22 @@ public class User implements UserDetails {
     private String gender;
 
     @Column
+    private String occupation;
+
+    @Column
+    private String employment;
+
+    @Column
+    private String questionnaire;
+
+    @Column
     private Role role;
+
+    @ManyToOne
+    private Center assigned;
+
+    @OneToMany
+    private Collection<Appointment> appointments;
 
     @Column(nullable = false)
     private boolean enabled;
@@ -151,12 +166,52 @@ public class User implements UserDetails {
         this.gender = gender;
     }
 
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public String getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(String employment) {
+        this.employment = employment;
+    }
+
+    public String getQuestionnaire() {
+        return questionnaire;
+    }
+
+    public void setQuestionnaire(String questionnaire) {
+        this.questionnaire = questionnaire;
+    }
+
     public Role getRole() {
         return role;
     }
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Center getAssigned() {
+        return assigned;
+    }
+
+    public void setAssigned(Center assigned) {
+        this.assigned = assigned;
+    }
+
+    public Collection<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(Collection<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     @Override
