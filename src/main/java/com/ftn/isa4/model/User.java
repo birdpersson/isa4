@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -55,8 +56,8 @@ public class User implements UserDetails {
     @Column
     private String employment;
 
-    @Column
-    private String questionnaire;
+    @ElementCollection
+    private Collection<String> questionnaire;
 
     @Column
     private Role role;
@@ -65,7 +66,7 @@ public class User implements UserDetails {
     private Center assigned;
 
     @OneToMany
-    private Collection<Appointment> appointments;
+    private Collection<Appointment> appointments = new HashSet<>();
 
     @Column(nullable = false)
     private boolean enabled;
@@ -182,11 +183,11 @@ public class User implements UserDetails {
         this.employment = employment;
     }
 
-    public String getQuestionnaire() {
+    public Collection<String> getQuestionnaire() {
         return questionnaire;
     }
 
-    public void setQuestionnaire(String questionnaire) {
+    public void setQuestionnaire(Collection<String> questionnaire) {
         this.questionnaire = questionnaire;
     }
 
@@ -212,6 +213,10 @@ public class User implements UserDetails {
 
     public void setAppointments(Collection<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
     }
 
     @Override

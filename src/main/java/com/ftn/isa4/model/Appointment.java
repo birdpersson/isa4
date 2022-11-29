@@ -1,5 +1,7 @@
 package com.ftn.isa4.model;
 
+import org.threeten.extra.Interval;
+
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.Collection;
@@ -47,6 +49,27 @@ public class Appointment {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public boolean isAvailable() {
+        return type.equals(Type.AVAILABLE);
+    }
+
+    public boolean isReserved() {
+        return type.equals(Type.RESERVED);
+    }
+
+    public boolean isCanceled() {
+        return type.equals(Type.CANCELED);
+    }
+
+    public Interval getInterval() {
+        return Interval.of(getStart(), getEnd());
+    }
+
+    public void setInterval(Interval interval) {
+        this.start = interval.getStart();
+        this.end = interval.getEnd();
     }
 
     public Instant getStart() {

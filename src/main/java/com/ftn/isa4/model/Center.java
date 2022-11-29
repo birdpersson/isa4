@@ -1,7 +1,7 @@
 package com.ftn.isa4.model;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Collection;
 
 @Entity
@@ -27,10 +27,10 @@ public class Center {
     private String description;
 
     @Column
-    private Instant start;
+    private LocalTime opens;
 
-    @Column(name = "finish")
-    private Instant end;
+    @Column
+    private LocalTime closes;
 
     @OneToMany
     private Collection<Appointment> appointments;
@@ -86,20 +86,20 @@ public class Center {
         this.description = description;
     }
 
-    public Instant getStart() {
-        return start;
+    public LocalTime getOpens() {
+        return opens;
     }
 
-    public void setStart(Instant start) {
-        this.start = start;
+    public void setOpens(LocalTime opens) {
+        this.opens = opens;
     }
 
-    public Instant getEnd() {
-        return end;
+    public LocalTime getCloses() {
+        return closes;
     }
 
-    public void setEnd(Instant end) {
-        this.end = end;
+    public void setCloses(LocalTime closes) {
+        this.closes = closes;
     }
 
     public Collection<Appointment> getAppointments() {
@@ -108,6 +108,10 @@ public class Center {
 
     public void setAppointments(Collection<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
     }
 
     public Collection<User> getAdmins() {
