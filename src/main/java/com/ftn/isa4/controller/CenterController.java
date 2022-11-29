@@ -1,6 +1,7 @@
 package com.ftn.isa4.controller;
 
 import com.ftn.isa4.dto.AppointmentRequest;
+import com.ftn.isa4.dto.AppointmentResponse;
 import com.ftn.isa4.model.Appointment;
 import com.ftn.isa4.model.Center;
 import com.ftn.isa4.service.AppointmentService;
@@ -30,7 +31,7 @@ public class CenterController {
     }
 
     @PostMapping("{id}/appointment")
-    public ResponseEntity<Appointment> createAppointment(@PathVariable String id, @RequestBody AppointmentRequest dto) {
+    public ResponseEntity<AppointmentResponse> createAppointment(@PathVariable String id, @RequestBody AppointmentRequest dto) {
         Center center = centerService.findById(Long.parseLong(id));
         Interval interval = Interval.of(dto.getStart(), Duration.ofMinutes(dto.getDuration()));
 
@@ -44,7 +45,7 @@ public class CenterController {
         }
 
         Appointment appointment = appointmentService.create(center, dto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(new AppointmentResponse(appointment), HttpStatus.CREATED);
     }
 
 }

@@ -3,6 +3,7 @@ package com.ftn.isa4.model;
 import org.threeten.extra.Interval;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 
@@ -61,6 +62,10 @@ public class Appointment {
 
     public boolean isCanceled() {
         return type.equals(Type.CANCELED);
+    }
+
+    public boolean is24hBefore() {
+        return Interval.of(Instant.now(), Duration.ofHours(24)).getEnd().isBefore(start);
     }
 
     public Interval getInterval() {
