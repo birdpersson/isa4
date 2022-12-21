@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -42,6 +43,10 @@ public class UserService implements UserDetailsService {
         return repository.findByUsername(username);
     }
 
+    public User findByToken(String token) {
+        return repository.findByToken(token);
+    }
+
     public User save(UserRequest request) {
         User u = new User();
         u.setUsername(request.getUsername());
@@ -57,11 +62,18 @@ public class UserService implements UserDetailsService {
         u.setOccupation(request.getOccupation());
         u.setEmployment(request.getEmployment());
         u.setRole(User.Role.USER);
-        u.setEnabled(true);
+        u.setEnabled(false);
+        u.setToken(UUID.randomUUID().toString());
 
         List<Authority> auth = authService.findByName("ROLE_USER");
         u.setAuthorities(auth);
 
+        return repository.save(u);
+    }
+
+    public User enable(User u) {
+        u.setEnabled(true);
+        u.setToken(null);
         return repository.save(u);
     }
 
