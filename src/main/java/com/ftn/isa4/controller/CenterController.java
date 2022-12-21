@@ -35,7 +35,9 @@ public class CenterController {
         Center center = centerService.findById(Long.parseLong(id));
         Interval interval = Interval.of(dto.getStart(), Duration.ofMinutes(dto.getDuration()));
 
-        //TODO: check if interval between work hours
+        if (!center.isWithinWorkHours(interval))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         System.out.println("Creating:" + interval);
 
         for (Appointment a : center.getAppointments()) {

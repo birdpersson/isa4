@@ -1,7 +1,10 @@
 package com.ftn.isa4.model;
 
+import org.threeten.extra.Interval;
+
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Collection;
 
 @Entity
@@ -120,5 +123,14 @@ public class Center {
 
     public void setAdmins(Collection<User> admins) {
         this.admins = admins;
+    }
+
+    public boolean isWithinWorkHours(Interval interval) {
+        LocalTime start = LocalTime.from(interval.getStart().atZone(ZoneId.systemDefault()));
+        LocalTime end = LocalTime.from(interval.getEnd().atZone(ZoneId.systemDefault()));
+
+        return start.isAfter(opens) && start.isBefore(closes)
+                && end.isAfter(opens) && end.isBefore(closes)
+                && end.isAfter(start);
     }
 }
