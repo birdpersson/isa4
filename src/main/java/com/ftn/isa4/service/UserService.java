@@ -77,4 +77,8 @@ public class UserService implements UserDetailsService {
         return repository.save(u);
     }
 
+    public User edit(User u) {
+        return repository.save(u);
+    }
+
 }

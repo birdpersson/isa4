@@ -9,7 +9,6 @@ import com.ftn.isa4.service.EmailService;
 import com.ftn.isa4.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,10 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/auth")
 public class AuthenticationController {
 
     @Autowired
@@ -32,10 +30,10 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @PostMapping("/login")
     public ResponseEntity<UserTokenState> createAuthenticationToken(
