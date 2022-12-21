@@ -5,10 +5,12 @@ import com.ftn.isa4.model.Appointment;
 import com.ftn.isa4.model.User;
 import com.ftn.isa4.security.TokenUtils;
 import com.ftn.isa4.service.AppointmentService;
+import com.ftn.isa4.service.EmailService;
 import com.ftn.isa4.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,9 @@ public class AppointmentController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private AppointmentService appointmentService;
@@ -52,7 +57,14 @@ public class AppointmentController {
             return new ResponseEntity<>(HttpStatus.GONE);
         if (appointment.isCanceled() && user.getId().equals(appointment.getPatient().getId()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         Appointment reservation = appointmentService.reserve(user, appointment);
+        try {
+            emailService.sendReservationMail(user);
+        } catch (MailException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(new AppointmentResponse(reservation), HttpStatus.CREATED);
     }
 
