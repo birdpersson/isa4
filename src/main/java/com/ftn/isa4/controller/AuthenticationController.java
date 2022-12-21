@@ -68,7 +68,7 @@ public class AuthenticationController {
             e.printStackTrace();
         }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @GetMapping("/verify")
