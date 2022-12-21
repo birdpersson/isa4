@@ -42,7 +42,7 @@ public class CenterController {
 
         for (Appointment a : center.getAppointments()) {
             System.out.println("Interval:" + a.getInterval());
-            if (!a.isCanceled() && interval.overlaps(a.getInterval()))
+            if (interval.overlaps(a.getInterval()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
