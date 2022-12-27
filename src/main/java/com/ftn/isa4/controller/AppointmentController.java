@@ -1,6 +1,7 @@
 package com.ftn.isa4.controller;
 
 import com.ftn.isa4.dto.AppointmentResponse;
+import com.ftn.isa4.dto.ReservationResponse;
 import com.ftn.isa4.model.Appointment;
 import com.ftn.isa4.model.User;
 import com.ftn.isa4.security.TokenUtils;
@@ -50,7 +51,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}/reserve")
-    public ResponseEntity<AppointmentResponse> reserveAppointment(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<ReservationResponse> reserveAppointment(@PathVariable String id, HttpServletRequest request) {
         User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
         Appointment appointment = appointmentService.findById(Long.parseLong(id));
         if (appointment.isReserved())
@@ -65,7 +66,7 @@ public class AppointmentController {
         } catch (MailException e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<>(new AppointmentResponse(reservation), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ReservationResponse(reservation), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/cancel")
