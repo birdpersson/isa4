@@ -34,8 +34,8 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<User> view(HttpServletRequest request) {
-        User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+        return new ResponseEntity<>(userService.findByUsername(username), HttpStatus.OK);
     }
 
 }
