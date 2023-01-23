@@ -23,7 +23,7 @@ public class AppointmentService {
     public Appointment create(Center center, AppointmentRequest dto) {
         Appointment a = new Appointment();
         a.setType(Appointment.Type.AVAILABLE);
-        a.setInterval(Interval.of(dto.getStart(), Duration.ofMinutes(dto.getDuration())));
+        a.setInterval(Interval.of(dto.getStart(), dto.getEnd()));
         a.setCenter(center);
         center.addAppointment(a);
         return repository.save(a);

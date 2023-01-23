@@ -33,7 +33,7 @@ public class CenterController {
     @PostMapping("{id}/appointment")
     public ResponseEntity<AppointmentResponse> createAppointment(@PathVariable String id, @RequestBody AppointmentRequest dto) {
         Center center = centerService.findById(Long.parseLong(id));
-        Interval interval = Interval.of(dto.getStart(), Duration.ofMinutes(dto.getDuration()));
+        Interval interval = Interval.of(dto.getStart(), dto.getEnd());
 
         if (!center.isWithinWorkHours(interval))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

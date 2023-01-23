@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public class AppointmentRequest {
     private Instant start;
-    private Long duration;
+    private Instant end;
 
     public Instant getStart() {
         return start;
@@ -14,11 +14,11 @@ public class AppointmentRequest {
         this.start = start;
     }
 
-    public Long getDuration() {
-        return duration;
+    public Instant getEnd() {
+        return end;
     }
 
-    public void setDuration(Long duration) {
-        this.duration = duration;
+    public void setEnd(Instant end) {
+        this.end = end;
     }
 }

@@ -24,7 +24,7 @@ public class Center {
     private String address;
 
     @Column
-    private Long average;
+    private Long rating;
 
     @Column
     private String description;
@@ -73,12 +73,12 @@ public class Center {
         this.address = address;
     }
 
-    public Long getAverage() {
-        return average;
+    public Long getRating() {
+        return rating;
     }
 
-    public void setAverage(Long average) {
-        this.average = average;
+    public void setRating(Long rating) {
+        this.rating = rating;
     }
 
     public String getDescription() {
