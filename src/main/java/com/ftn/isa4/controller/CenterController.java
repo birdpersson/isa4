@@ -34,6 +34,7 @@ public class CenterController {
     public ResponseEntity<AppointmentResponse> createAppointment(@PathVariable String id, @RequestBody AppointmentRequest dto) {
         Center center = centerService.findById(Long.parseLong(id));
         Interval interval = Interval.of(dto.getStart(), dto.getEnd());
+        System.out.println("Received:" + interval);
 
         if (!center.isWithinWorkHours(interval))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -45,6 +46,7 @@ public class CenterController {
             if (interval.overlaps(a.getInterval()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        System.out.println("Created:" + interval);
 
         Appointment appointment = appointmentService.create(center, dto);
         return new ResponseEntity<>(new AppointmentResponse(appointment), HttpStatus.CREATED);

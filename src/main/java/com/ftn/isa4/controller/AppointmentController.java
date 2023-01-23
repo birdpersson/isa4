@@ -1,14 +1,17 @@
 package com.ftn.isa4.controller;
 
 import com.ftn.isa4.dto.AppointmentResponse;
+import com.ftn.isa4.dto.ReservationResponse;
 import com.ftn.isa4.model.Appointment;
 import com.ftn.isa4.model.User;
 import com.ftn.isa4.security.TokenUtils;
 import com.ftn.isa4.service.AppointmentService;
+import com.ftn.isa4.service.EmailService;
 import com.ftn.isa4.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +34,9 @@ public class AppointmentController {
     private UserService userService;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private AppointmentService appointmentService;
 
     @GetMapping("/")
@@ -45,15 +51,22 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}/reserve")
-    public ResponseEntity<AppointmentResponse> reserveAppointment(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<ReservationResponse> reserveAppointment(@PathVariable String id, HttpServletRequest request) {
         User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
         Appointment appointment = appointmentService.findById(Long.parseLong(id));
         if (appointment.isReserved())
             return new ResponseEntity<>(HttpStatus.GONE);
         if (appointment.isCanceled() && user.getId().equals(appointment.getPatient().getId()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         Appointment reservation = appointmentService.reserve(user, appointment);
-        return new ResponseEntity<>(new AppointmentResponse(reservation), HttpStatus.CREATED);
+        try {
+            emailService.sendReservationMail(user);
+        } catch (MailException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(new ReservationResponse(reservation), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/cancel")
