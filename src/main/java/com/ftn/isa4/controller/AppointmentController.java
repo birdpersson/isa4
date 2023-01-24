@@ -42,14 +42,23 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     @GetMapping("/")
-    private ResponseEntity<List<AppointmentResponse>> getAppointments(HttpServletRequest request) {
+    public ResponseEntity<List<ReservationResponse>> getAppointments(HttpServletRequest request) {
         User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
         Collection<Appointment> appointments = user.getAppointments();
-        List<AppointmentResponse> list = new ArrayList<>();
+        List<ReservationResponse> list = new ArrayList<>();
         for (Appointment a : appointments) {
-            list.add(new AppointmentResponse(a));
+            list.add(new ReservationResponse(a));
         }
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservationResponse> getAppointment(@PathVariable String id, HttpServletRequest request) {
+        String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+        Appointment appointment = appointmentService.findById(Long.parseLong(id));
+        if (!appointment.getPatient().getUsername().equals(username))
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new ReservationResponse(appointment), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/reserve")
@@ -60,8 +69,8 @@ public class AppointmentController {
             return new ResponseEntity<>(HttpStatus.GONE);
         if (appointment.isCanceled() && user.getId().equals(appointment.getPatient().getId()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//        if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         Appointment reservation = appointmentService.reserve(user, appointment);
         try {
             emailService.sendReservationMail(user, reservation);

@@ -5,7 +5,7 @@ import com.ftn.isa4.model.Appointment;
 public class ReservationResponse {
     private final Long id;
     private final Long centerId;
-        private final Long patientId;
+    private final Long patientId;
     private final String username;
     private final String interval;
     private final String type;
