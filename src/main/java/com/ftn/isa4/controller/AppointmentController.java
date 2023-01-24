@@ -8,6 +8,7 @@ import com.ftn.isa4.security.TokenUtils;
 import com.ftn.isa4.service.AppointmentService;
 import com.ftn.isa4.service.EmailService;
 import com.ftn.isa4.service.UserService;
+import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,12 +60,12 @@ public class AppointmentController {
             return new ResponseEntity<>(HttpStatus.GONE);
         if (appointment.isCanceled() && user.getId().equals(appointment.getPatient().getId()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         Appointment reservation = appointmentService.reserve(user, appointment);
         try {
-            emailService.sendReservationMail(user);
-        } catch (MailException e) {
+            emailService.sendReservationMail(user, reservation);
+        } catch (MailException | IOException | WriterException e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(new ReservationResponse(reservation), HttpStatus.CREATED);
