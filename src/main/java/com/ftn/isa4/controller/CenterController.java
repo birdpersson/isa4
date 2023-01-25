@@ -2,6 +2,7 @@ package com.ftn.isa4.controller;
 
 import com.ftn.isa4.dto.AppointmentRequest;
 import com.ftn.isa4.dto.AppointmentResponse;
+import com.ftn.isa4.dto.CenterResponse;
 import com.ftn.isa4.model.Appointment;
 import com.ftn.isa4.model.Center;
 import com.ftn.isa4.service.AppointmentService;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.threeten.extra.Interval;
 
-import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Controller
@@ -26,11 +27,21 @@ public class CenterController {
     private AppointmentService appointmentService;
 
     @GetMapping("/")
-    public ResponseEntity<Collection<Center>> getCenters() {
-        return new ResponseEntity<>(centerService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Collection<CenterResponse>> getCenters() {
+        Collection<Center> centers = centerService.findAll();
+        Collection<CenterResponse> response = new ArrayList<>();
+        for (Center c : centers) {
+            response.add(new CenterResponse(c));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("{id}/appointment")
+    @GetMapping("/{id}")
+    public ResponseEntity<CenterResponse> getCenter(@PathVariable String id) {
+        return new ResponseEntity<>(new CenterResponse(centerService.findById(Long.parseLong(id))), HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/appointment")
     public ResponseEntity<AppointmentResponse> createAppointment(@PathVariable String id, @RequestBody AppointmentRequest dto) {
         Center center = centerService.findById(Long.parseLong(id));
         Interval interval = Interval.of(dto.getStart(), dto.getEnd());
