@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/center")
@@ -46,6 +47,11 @@ public class CenterController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CenterResponse> getCenter(@PathVariable String id) {
+        return new ResponseEntity<>(new CenterResponse(centerService.findById(Long.parseLong(id))), HttpStatus.OK);
+    }
+
     @GetMapping("/")
     public ResponseEntity<Collection<CenterResponse>> getCenters() {
         Collection<Center> centers = centerService.findAll();
@@ -56,9 +62,18 @@ public class CenterController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CenterResponse> getCenter(@PathVariable String id) {
-        return new ResponseEntity<>(new CenterResponse(centerService.findById(Long.parseLong(id))), HttpStatus.OK);
+    @PostMapping("/search")
+    public ResponseEntity<Collection<CenterResponse>> searchCenters(@RequestBody AppointmentRequest dto) {
+        Collection<Center> centers = centerService.findAll();
+        Interval interval = Interval.of(dto.getStart(), dto.getEnd());
+        centers = centers.stream().filter(center -> center.isWithinWorkHours(interval)).collect(Collectors.toList());
+        centers = centers.stream().filter(center -> center.getAppointments().stream().noneMatch(appointment -> (
+                appointment.isCanceled() || !interval.overlaps(appointment.getInterval())))).collect(Collectors.toList());
+        Collection<CenterResponse> response = new ArrayList<>();
+        for (Center c : centers) {
+            response.add(new CenterResponse(c));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{id}/appointment")
