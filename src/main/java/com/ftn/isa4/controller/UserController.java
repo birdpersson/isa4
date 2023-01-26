@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Controller
@@ -39,6 +40,17 @@ public class UserController {
     public ResponseEntity<UserResponse> view(HttpServletRequest request) {
         String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
         return new ResponseEntity<>(new UserResponse(userService.findByUsername(username)), HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<Collection<UserResponse>> getAll(HttpServletRequest request) {
+        Collection<User> users = userService.findAll();
+        Collection<UserResponse> response = new ArrayList<>();
+        for (User u : users) {
+            response.add(new UserResponse(u));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

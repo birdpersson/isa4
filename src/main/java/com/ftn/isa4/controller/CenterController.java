@@ -65,10 +65,13 @@ public class CenterController {
     @PostMapping("/search")
     public ResponseEntity<Collection<CenterResponse>> searchCenters(@RequestBody AppointmentRequest dto) {
         Collection<Center> centers = centerService.findAll();
-        Interval interval = Interval.of(dto.getStart(), dto.getEnd());
-        centers = centers.stream().filter(center -> center.isWithinWorkHours(interval)).collect(Collectors.toList());
-        centers = centers.stream().filter(center -> center.getAppointments().stream().noneMatch(appointment -> (
-                appointment.isCanceled() || !interval.overlaps(appointment.getInterval())))).collect(Collectors.toList());
+        if (dto.getStart() != null && dto.getEnd() != null) {
+            Interval interval = Interval.of(dto.getStart(), dto.getEnd());
+            System.out.println("Searching:" + interval);
+            centers = centers.stream().filter(center -> center.isWithinWorkHours(interval)).collect(Collectors.toList());
+            centers = centers.stream().filter(center -> center.getAppointments().stream().noneMatch(appointment -> (
+                    !interval.overlaps(appointment.getInterval())))).collect(Collectors.toList());
+        }
         Collection<CenterResponse> response = new ArrayList<>();
         for (Center c : centers) {
             response.add(new CenterResponse(c));

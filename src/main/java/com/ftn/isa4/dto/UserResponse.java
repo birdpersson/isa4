@@ -22,7 +22,6 @@ public class UserResponse {
     private final String employment;
     private Collection<String> questionnaire = new ArrayList<>();
     private final User.Role role;
-    private final CenterResponse assigned;
     private final Collection<ReservationResponse> appointments = new ArrayList<>();
     private final boolean enabled;
     private final String token;
@@ -43,7 +42,6 @@ public class UserResponse {
         this.employment = user.getEmployment();
         this.questionnaire = user.getQuestionnaire();
         this.role = user.getRole();
-        this.assigned = new CenterResponse(user.getAssigned());
         for (Appointment a : user.getAppointments()) {
             if (a.isReserved())
                 this.appointments.add(new ReservationResponse(a));
@@ -110,10 +108,6 @@ public class UserResponse {
 
     public User.Role getRole() {
         return role;
-    }
-
-    public CenterResponse getAssigned() {
-        return assigned;
     }
 
     public Collection<ReservationResponse> getAppointments() {
