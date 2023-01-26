@@ -37,6 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserResponse> view(HttpServletRequest request) {
         String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
         return new ResponseEntity<>(new UserResponse(userService.findByUsername(username)), HttpStatus.OK);
