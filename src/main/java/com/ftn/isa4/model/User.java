@@ -57,7 +57,7 @@ public class User implements UserDetails {
     private String employment;
 
     @ElementCollection
-    private Collection<String> questionnaire;
+    private Collection<String> questionnaire = new HashSet<>();
 
     @Column
     private Role role;

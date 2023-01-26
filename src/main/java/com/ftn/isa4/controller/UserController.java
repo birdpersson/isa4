@@ -1,5 +1,6 @@
 package com.ftn.isa4.controller;
 
+import com.ftn.isa4.dto.UserResponse;
 import com.ftn.isa4.model.User;
 import com.ftn.isa4.security.TokenUtils;
 import com.ftn.isa4.service.UserService;
@@ -28,16 +29,16 @@ public class UserController {
 
     @PostMapping("/form")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<User> create(@RequestBody Collection<String> selected, HttpServletRequest request) {
+    public ResponseEntity<UserResponse> create(@RequestBody Collection<String> selected, HttpServletRequest request) {
         User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
         user.setQuestionnaire(selected);
-        return new ResponseEntity<>(userService.edit(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(new UserResponse(userService.edit(user)), HttpStatus.CREATED);
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<User> view(HttpServletRequest request) {
+    public ResponseEntity<UserResponse> view(HttpServletRequest request) {
         String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-        return new ResponseEntity<>(userService.findByUsername(username), HttpStatus.OK);
+        return new ResponseEntity<>(new UserResponse(userService.findByUsername(username)), HttpStatus.OK);
     }
 
 }

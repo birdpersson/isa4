@@ -9,21 +9,13 @@ import java.util.Collection;
 
 public class CenterResponse {
     private final Long id;
-
     private final String name;
-
     private final String city;
-
     private final String address;
-
     private final Long rating;
-
     private final String description;
-
     private final LocalTime opens;
-
     private final LocalTime closes;
-
     private final Collection<AppointmentResponse> appointments = new ArrayList<>();
 
     public CenterResponse(Center center) {
