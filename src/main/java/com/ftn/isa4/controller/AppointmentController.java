@@ -13,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -61,7 +59,8 @@ public class AppointmentController {
         return new ResponseEntity<>(new ReservationResponse(appointment), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/reserve")
+    @PostMapping("/{id}/reserve")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ReservationResponse> reserveAppointment(@PathVariable String id, HttpServletRequest request) {
         User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
         Appointment appointment = appointmentService.findById(Long.parseLong(id));
@@ -70,7 +69,7 @@ public class AppointmentController {
         if (appointment.isCanceled() && user.getId().equals(appointment.getPatient().getId()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         if (user.getQuestionnaire().isEmpty() || user.getQuestionnaire().contains("O0"))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
         Appointment reservation = appointmentService.reserve(user, appointment);
         try {
             emailService.sendReservationMail(user, reservation);
@@ -80,7 +79,8 @@ public class AppointmentController {
         return new ResponseEntity<>(new ReservationResponse(reservation), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/cancel")
+    @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<AppointmentResponse> cancelAppointment(@PathVariable String id, HttpServletRequest request) {
         String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
         Appointment appointment = appointmentService.findById(Long.parseLong(id));

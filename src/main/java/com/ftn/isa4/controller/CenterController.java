@@ -10,6 +10,7 @@ import com.ftn.isa4.service.CenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.threeten.extra.Interval;
@@ -42,6 +43,7 @@ public class CenterController {
     }
 
     @PostMapping("/{id}/appointment")
+    @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<AppointmentResponse> createAppointment(@PathVariable String id, @RequestBody AppointmentRequest dto) {
         Center center = centerService.findById(Long.parseLong(id));
         Interval interval = Interval.of(dto.getStart(), dto.getEnd());

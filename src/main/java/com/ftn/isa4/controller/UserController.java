@@ -6,6 +6,7 @@ import com.ftn.isa4.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/form")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<User> create(@RequestBody Collection<String> selected, HttpServletRequest request) {
         User user = userService.findByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
         user.setQuestionnaire(selected);
